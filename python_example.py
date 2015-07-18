@@ -36,6 +36,9 @@ ale.loadROM(sys.argv[1])
 # Get the list of legal actions
 legal_actions = ale.getLegalActionSet()
 
+#TODO: initialize the replay memory
+#TODO: initialize the action value function with random weights
+
 # Play 10 episodes
 for episode in xrange(10):
   total_reward = 0
