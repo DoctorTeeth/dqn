@@ -7,8 +7,9 @@
             phi will be stored in pre-processed mode, so that tuples
             can be taken directly from the memory and used to train
             therefore, you will have to pre-process states before inserting them. 
-            The upshot is that, as long as you represent your actions as a vector indexable by ints
-            and as long as your rewards are in R^1, this code makes no assumptions about how
+            The upshot is that, as long as you represent your actions
+            as a vector indexable by ints
+            and as long as your reward in R^1, this code makes no assumptions about how
             you will implement the rest of the DQN.
             action is an int, and reward is some sort of float
         
@@ -16,9 +17,12 @@
             grabs some number of tuples from the replay memory
             ***optionally, delete tuples we've already trained on***
             a more sophisticated replay memory will pose some malloc-esque problems
-            in terms of memory fragmentation etc, but for now we just have this simple memory
+            in terms of memory fragmentation etc,
+            but for now we just have this simple memory
         
 """
+
+import numpy as np
 
 class ReplayMemory(object):
     """This class holds the actual physical replay memory
@@ -28,7 +32,7 @@ class ReplayMemory(object):
         # these actual types ought to be parameters as well
         # if the replay memory is really going to be agnostic
 
-        self.size == size
+        self.size = size
 
         # names should be self-explanatory
         #TODO: we need to write types and sizes to self
@@ -50,8 +54,8 @@ class ReplayMemory(object):
     def insert_tuple(self, phi_before, action, reward, phi_after):
         self.phi_befores[self.index] = phi_before 
         self.phi_afters[self.index]  = phi_after
-        self.action[self.index]      = action 
-        self.reward[self.index]      = reward 
+        self.actions[self.index]      = action 
+        self.rewards[self.index]      = reward 
 
         # if we haven't yet filled up the memory,
         # increment the occupant count
@@ -85,6 +89,7 @@ class ReplayMemory(object):
             # choose a random index between the first elt of replay
             # memory and the last elt of replay memory
             choice = np.random.randint(0, self.occupants - 1)            
+            #TODO: quasi-random sampling might improve training results
             
             phi_befores[sample_index] = self.phi_befores[choice]
             phi_afters[sample_index]  = self.phi_afters[choice]
@@ -98,14 +103,3 @@ class ReplayMemory(object):
         #TODO: should i turn this into a matrix?
             # does it even matter?
         return phi_befores, phi_afters, actions, rewards, terminal
-
-
-
-
-
-
-
-
-
-
- 
