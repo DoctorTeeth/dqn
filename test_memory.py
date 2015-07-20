@@ -1,4 +1,5 @@
 import replay_memory
+import numpy as np
 
 def sample_and_print(replayMem, count):
      
@@ -14,8 +15,12 @@ def sample_and_print(replayMem, count):
 print "testing replay memory"
 print
 
+# for this test, the type of the state tensor is uint8
+t = np.dtype('uint8')
+phiDims = (5,1)
+
 # declare memory of 10 experience tuples
-mem = replay_memory.ReplayMemory(10)
+mem = replay_memory.ReplayMemory(10,phiDims,t)
 
 # insert some tuples, but don't fill up the memory
 for i in range(0,5):

@@ -28,18 +28,25 @@ class ReplayMemory(object):
     """This class holds the actual physical replay memory
     """
 
-    def __init__(self, size):
+    def __init__(self, size, phiDims, phiType):
         # these actual types ought to be parameters as well
         # if the replay memory is really going to be agnostic
 
         self.size = size
 
+        self.dims    = (size,) + (phiDims)
+        self.phiType = phiType
+
         # names should be self-explanatory
+        # TODO: size comes in as an argument
+            # we'd like to pass in phiDims
+            # and have the dims of before and after be
+            # size times dims
         #TODO: we need to write types and sizes to self
         # TODO: what do we do about inserting terminal states?
         # so that they can be used to generate a random sample
-        self.phi_befores    = np.zeros(self.size, dtype='uint8')
-        self.phi_afters     = np.zeros(self.size, dtype='uint8')
+        self.phi_befores    = np.zeros(self.dims, dtype=self.phiType)
+        self.phi_afters     = np.zeros(self.dims, dtype=self.phiType)
         self.actions        = np.zeros(self.size, dtype='int16')
         self.rewards        = np.zeros(self.size, dtype='float')
         self.terminal       = np.zeros(self.size, dtype='bool')
@@ -52,8 +59,8 @@ class ReplayMemory(object):
 
 
     def insert_tuple(self, phi_before, action, reward, phi_after):
-        self.phi_befores[self.index] = phi_before 
-        self.phi_afters[self.index]  = phi_after
+        self.phi_befores[self.index, ...] = phi_before 
+        self.phi_afters[self.index, ...]  = phi_after
         self.actions[self.index]      = action 
         self.rewards[self.index]      = reward 
 
@@ -73,8 +80,8 @@ class ReplayMemory(object):
 
     def sample_tuples(self,count):
         # set aside memory for the sample        
-        phi_befores    = np.zeros(count, dtype='uint8')
-        phi_afters     = np.zeros(count, dtype='uint8')
+        phi_befores    = np.zeros(self.dims, dtype=self.phiType)
+        phi_afters     = np.zeros(self.dims, dtype=self.phiType)
         actions        = np.zeros(count, dtype='int16')
         rewards        = np.zeros(count, dtype='float')
         terminal       = np.zeros(count, dtype='bool')
@@ -98,7 +105,6 @@ class ReplayMemory(object):
             terminal[sample_index]    = self.terminal[choice]
             
             sample_index += 1 
-
 
         #TODO: should i turn this into a matrix?
             # does it even matter?
