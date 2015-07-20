@@ -1,5 +1,6 @@
 import replay_memory
 import numpy as np
+import sys
 
 def sample_and_print(replayMem, count):
      
@@ -17,14 +18,18 @@ print
 
 # for this test, the type of the state tensor is uint8
 t = np.dtype('uint8')
-phiDims = (5,1)
+phiDims = (2,2)
 
 # declare memory of 10 experience tuples
 mem = replay_memory.ReplayMemory(10,phiDims,t)
 
+#insert a single tuple, then print it, result should always be the same
+mem.insert_tuple(1, 2, 3, 4)
+sample_and_print(mem,1)
+
 # insert some tuples, but don't fill up the memory
-for i in range(0,5):
-    phi_before = i
+for i in range(0,4):
+    phi_before = i      # this and below does element-wise assign
     phi_after  = i + 1
     action     = 888
     reward     = 3.14159

@@ -29,24 +29,18 @@ class ReplayMemory(object):
     """
 
     def __init__(self, size, phiDims, phiType):
-        # these actual types ought to be parameters as well
-        # if the replay memory is really going to be agnostic
-
         self.size = size
 
-        self.dims    = (size,) + (phiDims)
+        # the size of the phi tensor is:
+        # <Number of samples> * <dims of an individual sample>
+        dims    = (size,) + (phiDims)
         self.phiType = phiType
+        self.phiDims = phiDims
 
-        # names should be self-explanatory
-        # TODO: size comes in as an argument
-            # we'd like to pass in phiDims
-            # and have the dims of before and after be
-            # size times dims
-        #TODO: we need to write types and sizes to self
         # TODO: what do we do about inserting terminal states?
         # so that they can be used to generate a random sample
-        self.phi_befores    = np.zeros(self.dims, dtype=self.phiType)
-        self.phi_afters     = np.zeros(self.dims, dtype=self.phiType)
+        self.phi_befores    = np.zeros(dims, dtype=self.phiType)
+        self.phi_afters     = np.zeros(dims, dtype=self.phiType)
         self.actions        = np.zeros(self.size, dtype='int16')
         self.rewards        = np.zeros(self.size, dtype='float')
         self.terminal       = np.zeros(self.size, dtype='bool')
@@ -80,8 +74,11 @@ class ReplayMemory(object):
 
     def sample_tuples(self,count):
         # set aside memory for the sample        
-        phi_befores    = np.zeros(self.dims, dtype=self.phiType)
-        phi_afters     = np.zeros(self.dims, dtype=self.phiType)
+
+        dims = (count,) + self.phiDims        
+
+        phi_befores    = np.zeros(dims, dtype=self.phiType)
+        phi_afters     = np.zeros(dims, dtype=self.phiType)
         actions        = np.zeros(count, dtype='int16')
         rewards        = np.zeros(count, dtype='float')
         terminal       = np.zeros(count, dtype='bool')
@@ -95,7 +92,7 @@ class ReplayMemory(object):
 
             # choose a random index between the first elt of replay
             # memory and the last elt of replay memory
-            choice = np.random.randint(0, self.occupants - 1)            
+            choice = np.random.randint(0, self.occupants)            
             #TODO: quasi-random sampling might improve training results
             
             phi_befores[sample_index] = self.phi_befores[choice]
@@ -106,6 +103,5 @@ class ReplayMemory(object):
             
             sample_index += 1 
 
-        #TODO: should i turn this into a matrix?
-            # does it even matter?
+        # We give these back as a tuple (is there a nicer way?)
         return phi_befores, phi_afters, actions, rewards, terminal
