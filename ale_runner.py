@@ -2,6 +2,7 @@
 This class trains an arbitrary agent using ALE.
 It also provides functions for testing the agent.
 """
+import numpy as np
 from ale_python_interface import ALEInterface
 
 class ALERunner(object):
@@ -13,16 +14,18 @@ class ALERunner(object):
     
     def __init__(self, agent, screenFilter, romFile):
         self.ale = ALEInterface()
+
+        # we need to set this up before we can get the action set
+        self.ale.setInt('random_seed', 123)
+        self.ale.loadROM(romFile)
+
         self.agent = agent
         self.screenFilter = screenFilter
         self.actions = self.ale.getMinimalActionSet()
-        self.screenWidth, self.screenHeight = ale.getScreenDims()
+        self.screenWidth, self.screenHeight = self.ale.getScreenDims()
         self.screenBuffer = np.empty((self.screenHeight, self.screenWidth, 3),
                                  dtype=np.uint8)
 
-        # set the random seed for ALE
-        ale.setInt('random_seed', 123)
-        ale.loadROM(romFile)
 
         #TODO:
         # maybe allow for people to watch the whole training run?
