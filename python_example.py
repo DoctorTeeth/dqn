@@ -20,7 +20,7 @@ ale.setInt('random_seed', 123)
 # Set USE_SDL to true to display the screen. ALE must be compilied
 # with SDL enabled for this to work. On OSX, pygame init is used to
 # proxy-call SDL_main.
-USE_SDL = False
+USE_SDL = False 
 if USE_SDL:
   if sys.platform == 'darwin':
     import pygame
