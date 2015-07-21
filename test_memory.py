@@ -63,3 +63,14 @@ if xs[2] == 0:
     print "PASS"
 else:
     print "FAIL"
+
+# test that we can allocate a memory big enough to train the nature model
+# this allocates space for 1 million tuples
+# where each tuple represents stores 84 by 84 by 4 
+# stack of 4 most recent grayscaled images
+# so we do have enough memory to just use
+bigDims = (84,84,4) 
+big_t = np.dtype('uint8')
+big = replay_memory.ReplayMemory(1000 * 1000,bigDims,big_t)
+
+print "big memory allocation: PASS"
