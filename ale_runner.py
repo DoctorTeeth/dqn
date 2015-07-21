@@ -2,8 +2,6 @@
 This class trains an arbitrary agent using ALE.
 It also provides functions for testing the agent.
 """
-import sys
-from random import randrange
 from ale_python_interface import ALEInterface
 
 class ALERunner(object):
@@ -11,15 +9,24 @@ class ALERunner(object):
         and turns that into what we actually use in the agent
         we will need to pass this in when we instantiate the ALERunner
     """
-
-    def __init__(self, agent, screenFilter):
+    #TODO: describe the arg list in more detail
+    
+    def __init__(self, agent, screenFilter, romFile):
         self.ale = ALEInterface()
         self.agent = agent
         self.screenFilter = screenFilter
-        self.actions = ale.getMinimalActionSet()
+        self.actions = self.ale.getMinimalActionSet()
         self.screenWidth, self.screenHeight = ale.getScreenDims()
         self.screenBuffer = np.empty((self.screenHeight, self.screenWidth, 3),
                                  dtype=np.uint8)
+
+        # set the random seed for ALE
+        ale.setInt('random_seed', 123)
+        ale.loadROM(romFile)
+
+        #TODO:
+        # maybe allow for people to watch the whole training run?
+
 
         # TODO
         # should this include all of the loading of the ROM etc?
@@ -55,43 +62,3 @@ class ALERunner(object):
 
         return self.screenFilter(self.screenBuffer)
 
-
-
-if len(sys.argv) < 2:
-  print 'Usage:', sys.argv[0], 'rom_file'
-  sys.exit()
-
-ale = ALEInterface()
-
-# Get & Set the desired settings
-ale.setInt('random_seed', 123)
-
-# Set USE_SDL to true to display the screen. ALE must be compiled
-# with SDL enabled for this to work. On OSX, pygame init is used to
-# proxy-call SDL_main.
-USE_SDL = False
-if USE_SDL:
-  if sys.platform == 'darwin':
-    import pygame
-    pygame.init()
-    ale.setBool('sound', False) # Sound doesn't work on OSX
-  elif sys.platform.startswith('linux'):
-    ale.setBool('sound', True)
-  ale.setBool('display_screen', True)
-
-# Load the ROM file
-ale.loadROM(sys.argv[1])
-
-# Get the list of legal actions
-legal_actions = ale.getLegalActionSet()
-
-# Play 10 episodes
-for episode in xrange(10):
-  total_reward = 0
-  while not ale.game_over():
-    a = legal_actions[randrange(len(legal_actions))]
-    # Apply an action and get the resulting reward
-    reward = ale.act(a);
-    total_reward += reward
-  print 'Episode', episode, 'ended with score:', total_reward
-  ale.reset_game()
