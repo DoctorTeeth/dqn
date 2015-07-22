@@ -23,3 +23,16 @@ import sys
 # another thing is that the downsampling is part of 
 # the environment and not the agent, so we should make sure to 
 # keep that in the experiment layer 
+
+
+class Agent():
+    def __init__(self):
+        #initialize the state of the agent
+        print "initializing agent"
+    
+
+    def step(self, reward, observation):
+        #for now, always return the null action
+        return 0
+
+
