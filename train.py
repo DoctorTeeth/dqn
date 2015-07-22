@@ -14,11 +14,3 @@ romFile = sys.argv[1]
 
 runner = ALERunner(agent, screenFilter, romFile)
 
-# TESTING CODE:
-
-#ale = ALEInterface()
-
-#ale.setInt('random_seed', 123)
-#ale.loadROM(romFile)
-#actions = ale.getMinimalActionSet()
-
