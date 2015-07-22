@@ -21,10 +21,12 @@ agent = Agent()
 screenFilter = "foo"
 romFile = sys.argv[1]
 epochs = 2
-epoch_steps = 100
+epoch_steps = 1000
+watch_training = True
 
 #initialize the runner, which marshalls the ALE process
-runner = ALERunner(agent, screenFilter, romFile, epochs, epoch_steps)
+runner = ALERunner(agent, screenFilter, romFile, epochs, epoch_steps,
+            watch_training)
 
 #start training
 runner.train_agent()

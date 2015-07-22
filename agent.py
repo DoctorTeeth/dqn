@@ -5,6 +5,7 @@ when we have other emulators besides just ALE
 
 import numpy as np
 import sys
+from random import randrange
 
 # we will have to fill this in alongside the other guy
 
@@ -29,10 +30,10 @@ class Agent():
     def __init__(self):
         #initialize the state of the agent
         print "initializing agent"
-    
 
-    def step(self, reward, observation):
+    def step(self, reward, observation, actions):
         #for now, always return the null action
-        return 0
+        a = actions[randrange(len(actions))]
+        return a
 
 

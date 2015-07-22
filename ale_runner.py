@@ -5,6 +5,7 @@ It also provides functions for testing the agent.
 import numpy as np
 from ale_python_interface import ALEInterface
 import logging
+import sys
 
 # configure the logger to print all messages
 # we could write this to a file if we wanted
@@ -17,8 +18,13 @@ class ALERunner(object):
     """
     #TODO: describe the arg list in more detail
     
-    def __init__(self, agent, screenFilter, romFile, epochs, epoch_steps):
+    def __init__(self, agent, screenFilter, romFile, epochs, epoch_steps,
+                    watch_training):
         self.ale = ALEInterface()
+
+        #need to start watching before ROM is loaded
+        if watch_training:
+            self.start_watching() 
 
         # we need to set this up before we can get the action set
         self.ale.setInt('random_seed', 123)
@@ -33,6 +39,7 @@ class ALERunner(object):
 
         self.epoch_steps = epoch_steps
         self.epochs = epochs
+
 
         #TODO:
         # maybe allow for people to watch the whole training run?
@@ -87,7 +94,7 @@ class ALERunner(object):
 
             # an agent generates the next action based on the reward,
             # observation pair
-            action = self.agent.step(reward, observation)
+            action = self.agent.step(reward, observation,self.actions)
             logging.debug("Agent chooses action: " + str(action))
 
             steps_taken += 1
@@ -106,3 +113,16 @@ class ALERunner(object):
 
         return self.screenFilter(self.screenBuffer)
 
+    def start_watching(self):
+        
+        logging.info("Starting up game watcher.")        
+
+        if sys.platform == 'darwin':
+            print "darwin"
+            import pygame
+            pygame.init()
+            self.ale.setBool('sound', False) # Sound doesn't work on OSX
+        elif sys.platform.startswith('linux'):
+            print "linux"
+            self.ale.setBool('sound', True)
+        self.ale.setBool('display_screen', True)
