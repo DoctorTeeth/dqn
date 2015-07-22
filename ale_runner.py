@@ -4,6 +4,11 @@ It also provides functions for testing the agent.
 """
 import numpy as np
 from ale_python_interface import ALEInterface
+import logging
+
+# configure the logger to print all messages
+# we could write this to a file if we wanted
+logging.basicConfig(level=logging.DEBUG)
 
 class ALERunner(object):
     """screenFilter is a function that takes in the full screen as input
@@ -40,14 +45,18 @@ class ALERunner(object):
         and optional testing epochs
         """
 
-        for epoch in range(0,self.epochs):
+        logging.info("Starting training cycle.")
+        #print "starting training cycle"
+        for i in range(0,self.epochs):
             # sprague has an agent finish the epoch separately
             # I want that to happen inside these calls
-            self.run_epoch()
+            self.run_epoch(i)
 
-    def run_epoch(self):
+    def run_epoch(self, epoch_counter):
         """an epoch is actually defined by a discrete number of timesteps
         """
+
+        logging.info("Running epoch: " + str(epoch_counter))
         steps_left = self.epoch_steps
         while steps_left > 0:
             steps_taken = self.run_game(steps_left)
@@ -57,6 +66,8 @@ class ALERunner(object):
         """ Run a single game. A single game may consist of multiple lives
             I say game instead of episode, because I think it's more natural
         """
+        
+        # keep track of steps taken in this game
         steps_taken = 0
         
         # we set the initial action, but it can be null for now
@@ -77,6 +88,9 @@ class ALERunner(object):
             # an agent generates the next action based on the reward,
             # observation pair
             action = self.agent.step(reward, observation)
+            logging.debug("Agent chooses action: " + str(action))
+
+            steps_taken += 1
 
         return steps_taken
          
